@@ -7,6 +7,8 @@ x_values = []
 y_values = []
 x = []
 y = []
+sp_min = 0
+sp_max = 0
 
 
 def ccw(a, b, c):  # cross product of two vectors with 1 similar coordinate(x or y) to calculate the angle between them
@@ -42,7 +44,9 @@ def jarvis_march(dataset_2d, sp):  # sp = starting point of convex hull with sma
         hull.append(next_p)  # insert current candidate point into the hull
         k += 1 # increase iterations counter
 
-def quickhull(dataset_2d, sp):
+def quickhull(dataset_2d, sp_min, sp_max):
+    hull.append(sp_min)
+    hull.append(sp_max)
     
 
 def starting_point():
@@ -52,15 +56,29 @@ def starting_point():
     if len(txt_split) % 2 == 0:     # check whether the total number of floats is divisible by 2
         for k in range(0, len(txt_split), 2):  # create list of vectors(or 2d-points)
             points_2d.append([float(txt_split[k]), float(txt_split[k + 1])])  #insert 2 values every time into points_2d to form a 2d point
-    starting_min = points_2d[0][0]  # pick starting min value the x coordinate of the first 2d point
+    sp_min = points_2d[0]  # pick starting min value as the x coordinate of the first 2d point
+    sp_max = points_2d[1]  # pick starting max value as the x coordinate of the second 2d point
     for j in points_2d:  # loop through the x coordinate of all the points in order to find the smallest x coordinate.
-        if j[0] < starting_min:     
-            starting_min = j[0]
-            st_p_index = points_2d.index(j)  # take index of starting point
+        if j[0] < sp_min[0]:      
+            sp_min[0] = j[0]
+            st_p_min_index = points_2d.index(j)  # take index of starting point
+        elif j[0] == sp_min[0]:
+            if(j[1] < sp_min[1]):
+                sp_min[0] = j[0]
+                st_p_min_index = points_2d.index(j) 
+    for j in points_2d:
+        if j[0] > sp_max[0]:
+            sp_max[0] = j[0]
+            st_p_max_index = points_2d.index(j)
+        elif j[0] == sp_max[0]:
+            if(j[1] > sp_max[1]):
+                sp_max[0] = j[0]
+                st_p_max_index = points_2d.index(j)
     file.close()
-    st_p = points_2d[st_p_index]  # the point with the smallest x is guaranteed to be part of the convex hull thus we use it as the starting point
+    st_p_min = points_2d[st_p_min_index]  # the point with the smallest x is guaranteed to be part of the convex hull thus we use it as the starting point(Jarvis March, Quickhull)
+    st_p_max = points_2d[st_p_max_index]  # the point with the biggest x value is guaranteed to be part of the convex hull thus we use it as starting point(Quickhull)  
     
-    return st_p
+    return st_p_min, st_p_max
 
 def print_hull(points_2d, hull):
     for i in range(len(points_2d)): 
@@ -74,7 +92,8 @@ def print_hull(points_2d, hull):
     plt.xlabel("x values", size=12)     # label x axis as x values
     plt.ylabel("y values", size=12)     # label y axis as y values
     plt.show()                          # show scatter and plot
-    
-ssp_index = starting_point()
-jarvis_march(points_2d, ssp_index)
-print_hull(points_2d, hull)
+   
+sp_min, sp_max = starting_point()
+print(sp_min, sp_max)
+# jarvis_march(points_2d, sp_min)
+# print_hull(points_2d, hull)
