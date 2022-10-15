@@ -2,7 +2,7 @@ import random
 
 file = open('dataset.txt', 'w')
 
-for _ in range(500):
+for _ in range(10):
     value1 = random.random()
     value2 = random.random()
     value1 = "{:.3f}".format(value1 * 100)
